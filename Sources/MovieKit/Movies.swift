@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Movies: Codable, Sendable {
+public struct MoviesResponse: Codable, Sendable {
     public let dates: DateRange
     public let page: Int
     public let results: [Movie]
@@ -21,13 +21,13 @@ public struct Movies: Codable, Sendable {
     }
     
     public init(
-        dates: DateRange,
+        dates: DateRange?,
         page: Int,
         results: [Movie],
         totalPages: Int,
         totalResults: Int
     ) {
-        self.dates = dates
+        self.dates = dates ?? DateRange(maximum: "1970-01-01", minimum: "1970-01-01")
         self.page = page
         self.results = results
         self.totalPages = totalPages
