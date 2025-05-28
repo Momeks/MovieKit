@@ -121,8 +121,8 @@ public extension Movie {
 
 // MARK: - Preview
 #if DEBUG
-public extension Movies {
-    static let preview: Movies = Movies(
+public extension MoviesResponse {
+    static let preview: MoviesResponse = MoviesResponse(
         dates: DateRange(maximum: "2023-05-03", minimum: "2023-03-16"),
         page: 1,
         results: [
