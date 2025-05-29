@@ -106,11 +106,18 @@ extension Movie {
         return formatter.date(from: releaseDate)
     }
     
-    public var formattedReleasedDate: String? {
+    public var formattedReleaseDate: String? {
         guard let date = releaseDateAsDate else { return nil }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.dateStyle = .medium
+        formatter.dateStyle = .long
+        return formatter.string(from: date)
+    }
+    
+    public var releaseYear: String? {
+        guard let date = releaseDateAsDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy"
         return formatter.string(from: date)
     }
     
