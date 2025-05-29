@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Genres: Int, CaseIterable {
+public enum MovieGenre: Int, CaseIterable {
     case action = 28
     case adventure = 12
     case animation = 16
@@ -23,31 +23,29 @@ public enum Genres: Int, CaseIterable {
     case mystery = 9648
     case romance = 10749
     case scienceFiction = 878
-    case tvMovie = 10770
     case thriller = 53
     case war = 10752
     case western = 37
-
-    public var localizedName: String {
+    
+    public var name: String {
         switch self {
         case .action: return "Action"
-        case .adventure: return "Abenteuer"
+        case .adventure: return "Adventure"
         case .animation: return "Animation"
-        case .comedy: return "Komödie"
-        case .crime: return "Krimi"
-        case .documentary: return "Dokumentarfilm"
+        case .comedy: return "Comedy"
+        case .crime: return "Crime"
+        case .documentary: return "Documentary"
         case .drama: return "Drama"
-        case .family: return "Familie"
+        case .family: return "Family"
         case .fantasy: return "Fantasy"
-        case .history: return "Historie"
+        case .history: return "History"
         case .horror: return "Horror"
-        case .music: return "Musik"
+        case .music: return "Music"
         case .mystery: return "Mystery"
-        case .romance: return "Liebesfilm"
+        case .romance: return "Romance"
         case .scienceFiction: return "Science Fiction"
-        case .tvMovie: return "TV-Film"
         case .thriller: return "Thriller"
-        case .war: return "Kriegsfilm"
+        case .war: return "War"
         case .western: return "Western"
         }
     }

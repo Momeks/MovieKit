@@ -7,49 +7,35 @@
 
 import Foundation
 
-public struct MoviesResponse: Codable, Sendable {
-    public let dates: DateRange
+// MARK: - Main Response
+public struct MovieResponse: Codable, Sendable {
+    public let dates: DateRange?
     public let page: Int
     public let results: [Movie]
     public let totalPages: Int
     public let totalResults: Int
     
-    public enum CodingKeys: String, CodingKey {
-        case dates, page, results
-        case totalPages = "total_pages"
-        case totalResults = "total_results"
-    }
-    
-    public init(
-        dates: DateRange?,
-        page: Int,
-        results: [Movie],
-        totalPages: Int,
-        totalResults: Int
-    ) {
-        self.dates = dates ?? DateRange(maximum: "1970-01-01", minimum: "1970-01-01")
+    public init(dates: DateRange?, page: Int, results: [Movie], totalPages: Int, totalResults: Int) {
+        self.dates = dates
         self.page = page
         self.results = results
         self.totalPages = totalPages
         self.totalResults = totalResults
     }
-}
-
-public struct DateRange: Codable, Sendable {
-    public let maximum: String
-    public let minimum: String
     
-    public init(maximum: String, minimum: String) {
-        self.maximum = maximum
-        self.minimum = minimum
+    enum CodingKeys: String, CodingKey {
+        case dates, page, results
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
     }
 }
 
-public struct Movie: Codable, Sendable {
-    public let id: Int
+// MARK: - Movie
+public struct Movie: Codable, Sendable, Identifiable {
     public let adult: Bool
     public let backdropPath: String?
     public let genreIds: [Int]
+    public let id: Int
     public let originalLanguage: String
     public let originalTitle: String
     public let overview: String
@@ -61,38 +47,11 @@ public struct Movie: Codable, Sendable {
     public let voteAverage: Double
     public let voteCount: Int
     
-    public enum CodingKeys: String, CodingKey {
-        case id, adult, overview, popularity, title, video
-        case backdropPath = "backdrop_path"
-        case genreIds = "genre_ids"
-        case originalLanguage = "original_language"
-        case originalTitle = "original_title"
-        case posterPath = "poster_path"
-        case releaseDate = "release_date"
-        case voteAverage = "vote_average"
-        case voteCount = "vote_count"
-    }
-    
-    public init(
-        id: Int,
-        adult: Bool,
-        backdropPath: String?,
-        genreIds: [Int],
-        originalLanguage: String,
-        originalTitle: String,
-        overview: String,
-        popularity: Double,
-        posterPath: String?,
-        releaseDate: String,
-        title: String,
-        video: Bool,
-        voteAverage: Double,
-        voteCount: Int
-    ) {
-        self.id = id
+    public init(adult: Bool, backdropPath: String?, genreIds: [Int], id: Int, originalLanguage: String, originalTitle: String, overview: String, popularity: Double, posterPath: String?, releaseDate: String, title: String, video: Bool, voteAverage: Double, voteCount: Int) {
         self.adult = adult
         self.backdropPath = backdropPath
         self.genreIds = genreIds
+        self.id = id
         self.originalLanguage = originalLanguage
         self.originalTitle = originalTitle
         self.overview = overview
@@ -104,63 +63,64 @@ public struct Movie: Codable, Sendable {
         self.voteAverage = voteAverage
         self.voteCount = voteCount
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case adult, id, overview, popularity, title, video
+        case backdropPath = "backdrop_path"
+        case genreIds = "genre_ids"
+        case originalLanguage = "original_language"
+        case originalTitle = "original_title"
+        case posterPath = "poster_path"
+        case releaseDate = "release_date"
+        case voteAverage = "vote_average"
+        case voteCount = "vote_count"
+    }
+}
+
+// MARK: - Date Range
+public struct DateRange: Codable, Sendable {
+    public let maximum: String
+    public let minimum: String
+    
+    public init(maximum: String, minimum: String) {
+        self.maximum = maximum
+        self.minimum = minimum
+    }
 }
 
 // MARK: - Helpers
-public extension Movie {
-    var posterURL: URL? {
-        guard let path = posterPath else { return nil }
-        return URL(string: "https://image.tmdb.org/t/p/w500\(path)")
+extension Movie {
+    public func backdropURL(size: String = "w500") -> URL? {
+        guard let backdropPath = backdropPath else { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/\(size)\(backdropPath)")
     }
     
-    var backdropURL: URL? {
-        guard let path = backdropPath else { return nil }
-        return URL(string: "https://image.tmdb.org/t/p/w780\(path)")
+    public func posterURL(size: String = "w500") -> URL? {
+        guard let posterPath = posterPath else { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/\(size)\(posterPath)")
+    }
+    
+    public var releaseDateAsDate: Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: releaseDate)
+    }
+    
+    public var releaseYear: String? {
+        guard let date = releaseDateAsDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy"
+        return formatter.string(from: date)
+    }
+    
+    public var formattedRating: String {
+        return String(format: "%.1f/10", voteAverage)
+    }
+    
+    public var genres: [String] {
+        return genreIds.compactMap { id in
+            MovieGenre(rawValue: id)?.name
+        }
     }
 }
 
-// MARK: - Preview
-#if DEBUG
-public extension MoviesResponse {
-    static let preview: MoviesResponse = MoviesResponse(
-        dates: DateRange(maximum: "2023-05-03", minimum: "2023-03-16"),
-        page: 1,
-        results: [
-            Movie(
-                id: 502356,
-                adult: false,
-                backdropPath: "/iJQIbOPm81fPEGKt5BPuZmfnA54.jpg",
-                genreIds: [16, 12, 10751, 14, 35],
-                originalLanguage: "en",
-                originalTitle: "The Super Mario Bros. Movie",
-                overview: "While working underground to fix a water main, Brooklyn plumbers—and brothers—Mario and Luigi are transported down a mysterious pipe and wander into a magical new world. But when the brothers are separated, Mario embarks on an epic quest to find Luigi.",
-                popularity: 6572.614,
-                posterPath: "/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg",
-                releaseDate: "2023-04-05",
-                title: "The Super Mario Bros. Movie",
-                video: false,
-                voteAverage: 7.5,
-                voteCount: 1456
-            ),
-            Movie(
-                id: 594767,
-                adult: false,
-                backdropPath: "/nDxJJyA5giRhXx96q1sWbOUjMBI.jpg",
-                genreIds: [28, 35, 14],
-                originalLanguage: "en",
-                originalTitle: "Shazam! Fury of the Gods",
-                overview: "Billy Batson and his foster siblings, who transform into superheroes by saying \"Shazam!\", are forced to get back into action and fight the Daughters of Atlas.",
-                popularity: 4274.232,
-                posterPath: "/2VK4d3mqqTc7LVZLnLPeRiPaJ71.jpg",
-                releaseDate: "2023-03-15",
-                title: "Shazam! Fury of the Gods",
-                video: false,
-                voteAverage: 6.9,
-                voteCount: 1231
-            )
-        ],
-        totalPages: 87,
-        totalResults: 1734
-    )
-}
-#endif
