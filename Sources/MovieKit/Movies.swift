@@ -124,3 +124,42 @@ extension Movie {
     }
 }
 
+// MARK: - Preview Data
+#if DEBUG
+extension Movie {
+    public static let previews: [Movie] = [
+        Movie(
+            adult: false,
+            backdropPath: "/nDxJJyA5giRhXx96q1sWbOUjMBI.jpg",
+            genreIds: [28, 35, 14],
+            id: 594767,
+            originalLanguage: "en",
+            originalTitle: "Shazam! Fury of the Gods",
+            overview: "Billy Batson and his foster siblings, who transform into superheroes by saying \"Shazam!\", are forced to get back into action and fight the Daughters of Atlas.",
+            popularity: 4274.232,
+            posterPath: "/2VK4d3mqqTc7LVZLnLPeRiPaJ71.jpg",
+            releaseDate: "2023-03-15",
+            title: "Shazam! Fury of the Gods",
+            video: false,
+            voteAverage: 6.9,
+            voteCount: 1231
+        ),
+        Movie(
+            adult: false,
+            backdropPath: "/h8gHn0OzBoaefsYseUByqsmEDMY.jpg",
+            genreIds: [28, 53, 80],
+            id: 603692,
+            originalLanguage: "en",
+            originalTitle: "John Wick: Chapter 4",
+            overview: "With the price on his head ever increasing, John Wick uncovers a path to defeating The High Table.",
+            popularity: 1320.735,
+            posterPath: "/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+            releaseDate: "2023-03-22",
+            title: "John Wick: Chapter 4",
+            video: false,
+            voteAverage: 8.0,
+            voteCount: 1211
+        )
+    ]
+}
+#endif
